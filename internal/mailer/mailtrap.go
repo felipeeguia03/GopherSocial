@@ -2,11 +2,14 @@ package mailer
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
+	"fmt"
 	"html/template"
-
-	gomail "gopkg.in/mail.v2"
+	"net/http"
 )
+
+const mailtrapAPIURL = "https://send.api.mailtrap.io/api/send"
 
 type mailTrapClient struct {
 	fromEmail string
@@ -25,37 +28,49 @@ func NewMailTrapClient(apiKey, fromEmail string) (mailTrapClient, error) {
 }
 
 func (m mailTrapClient) Send(templateFile, username, email string, data any, isSandbox bool) (int, error) {
-	//template parsing and building
-
 	tmpl, err := template.ParseFS(FS, "templates/"+templateFile)
 	if err != nil {
 		return -1, err
 	}
 
 	subject := new(bytes.Buffer)
-	err = tmpl.ExecuteTemplate(subject, "subject", data)
-	if err != nil {
+	if err = tmpl.ExecuteTemplate(subject, "subject", data); err != nil {
 		return -1, err
 	}
 
 	body := new(bytes.Buffer)
-	err = tmpl.ExecuteTemplate(body, "body", data)
+	if err = tmpl.ExecuteTemplate(body, "body", data); err != nil {
+		return -1, err
+	}
+
+	payload := map[string]any{
+		"from":    map[string]string{"email": m.fromEmail},
+		"to":      []map[string]string{{"email": email}},
+		"subject": subject.String(),
+		"html":    body.String(),
+	}
+
+	jsonBody, err := json.Marshal(payload)
 	if err != nil {
 		return -1, err
 	}
 
-	message := gomail.NewMessage()
-	message.SetHeader("From", m.fromEmail)
-	message.SetHeader("To", email)
-	message.SetHeader("Subject", subject.String())
-
-	message.AddAlternative("text/html", body.String())
-
-	dialer := gomail.NewDialer("live.smtp.mailtrap.io", 587, "api", m.apiKey)
-	if err := dialer.DialAndSend(message); err != nil {
+	req, err := http.NewRequest(http.MethodPost, mailtrapAPIURL, bytes.NewBuffer(jsonBody))
+	if err != nil {
 		return -1, err
 	}
+	req.Header.Set("Authorization", "Bearer "+m.apiKey)
+	req.Header.Set("Content-Type", "application/json")
 
-	return 200, nil
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return -1, err
+	}
+	defer resp.Body.Close()
 
+	if resp.StatusCode >= 400 {
+		return resp.StatusCode, fmt.Errorf("mailtrap API error: status %d", resp.StatusCode)
+	}
+
+	return resp.StatusCode, nil
 }

@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -97,7 +98,7 @@ func (app *application) mount() http.Handler {
 	r.Use(middleware.Timeout(time.Second * 5))
 
 	r.Use(cors.Handler(cors.Options{
-		AllowedOrigins:   []string{env.GetString("CORS_ALLOWED_ORIGIN", "http://localhost:5174")},
+		AllowedOrigins:   strings.Split(env.GetString("CORS_ALLOWED_ORIGIN", "http://localhost:5174"), ","),
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
 		ExposedHeaders:   []string{"Link"},

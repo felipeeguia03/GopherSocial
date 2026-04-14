@@ -33,7 +33,6 @@ require (
 	golang.org/x/sys v0.39.0 // indirect
 	golang.org/x/text v0.32.0 // indirect
 	golang.org/x/tools v0.39.0 // indirect
-	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
@@ -47,5 +46,4 @@ require (
 	github.com/lib/pq v1.12.0
 	github.com/swaggo/http-swagger/v2 v2.0.2
 	go.uber.org/multierr v1.10.0 // indirect
-	gopkg.in/mail.v2 v2.3.1
 )

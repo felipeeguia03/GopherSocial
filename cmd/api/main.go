@@ -45,7 +45,7 @@ func main() {
 			maxOpenConns: env.GetInt("MAX_OPEN_CONNS", 20),
 		},
 		mail: mailConfig{
-			fromEmail: env.GetString("FROM_EMAIL", "gophersocial@demomailtrap.co"),
+			fromEmail: env.GetString("FROM_EMAIL", "onboarding@resend.dev"),
 			exp:       time.Hour * 24 * 3, //3 days
 			mailtrap: mailtrapConfig{
 				APIKey: env.GetString("MAIL_TRAP_API", ""),
@@ -87,6 +87,7 @@ func main() {
 	}
 
 	logger.Infow("Base de datos conectada correctamente")
+	logger.Infow("config", "fromEmail", cfg.mail.fromEmail, "apiKeyLen", len(cfg.mail.mailtrap.APIKey), "frontendURL", cfg.frontendURL)
 
 	store := store.NewStorage(db)
 

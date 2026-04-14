@@ -24,7 +24,7 @@ type Storage struct {
 		CreateAndInvite(ctx context.Context, user *User, token string, invitationExp time.Duration) error
 		Activate(context.Context, string) error
 		GetUserByEmail(context.Context, string) (*User, error)
-		SearchByUsername(ctx context.Context, query string) ([]*User, error)
+		SearchByUsername(ctx context.Context, viewerID int64, query string) ([]*User, error)
 		GetSuggestedUsers(ctx context.Context, userID int64) ([]*User, error)
 	}
 	Posts interface {

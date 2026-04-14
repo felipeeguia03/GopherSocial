@@ -39,7 +39,7 @@ func (m *MockUserStore) Delete(ctx context.Context, id int64) error {
 	return nil
 }
 
-func (m *MockUserStore) SearchByUsername(ctx context.Context, query string) ([]*User, error) {
+func (m *MockUserStore) SearchByUsername(ctx context.Context, viewerID int64, query string) ([]*User, error) {
 	return nil, nil
 }
 

@@ -150,6 +150,20 @@ func (app *application) searchUsersHandler(w http.ResponseWriter, r *http.Reques
 	}
 }
 
+func (app *application) getSuggestedUsersHandler(w http.ResponseWriter, r *http.Request) {
+	me := app.getAuthUserFromContext(r)
+
+	users, err := app.store.Users.GetSuggestedUsers(r.Context(), me.ID)
+	if err != nil {
+		app.InternalServerError(w, r, err)
+		return
+	}
+
+	if err := JsonResponse(w, http.StatusOK, users); err != nil {
+		app.InternalServerError(w, r, err)
+	}
+}
+
 func (app *application) activateUserHandler(w http.ResponseWriter, r *http.Request) {
 	token := chi.URLParam(r, "token")
 

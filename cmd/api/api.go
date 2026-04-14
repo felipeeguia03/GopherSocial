@@ -133,6 +133,7 @@ func (app *application) mount() http.Handler {
 			r.Group(func(r chi.Router) {
 				r.Use(app.authTokenMiddleware)
 				r.Get("/search", app.searchUsersHandler)
+				r.Get("/suggested", app.getSuggestedUsersHandler)
 				r.Route("/{userID}", func(r chi.Router) {
 					r.Use(app.userContextMiddleware)
 					r.Get("/", app.getUserHandler)

@@ -43,6 +43,10 @@ func (m *MockUserStore) SearchByUsername(ctx context.Context, query string) ([]*
 	return nil, nil
 }
 
+func (m *MockUserStore) GetSuggestedUsers(ctx context.Context, userID int64) ([]*User, error) {
+	return nil, nil
+}
+
 type MockRoleStore struct{}
 
 func (m *MockRoleStore) GetByName(ctx context.Context, slug string) (*Role, error) {

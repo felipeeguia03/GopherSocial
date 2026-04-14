@@ -297,6 +297,37 @@ func (s *UsersStore) SearchByUsername(ctx context.Context, query string) ([]*Use
 	return users, rows.Err()
 }
 
+func (s *UsersStore) GetSuggestedUsers(ctx context.Context, userID int64) ([]*User, error) {
+	q := `SELECT id, username, email, created_at, is_active
+	FROM users
+	WHERE is_active = true
+	AND id != $1
+	AND id NOT IN (
+		SELECT follower_id FROM followers WHERE user_id = $1
+	)
+	ORDER BY created_at DESC
+	LIMIT 10`
+
+	ctx, cancel := context.WithTimeout(ctx, QueryTimeDuration)
+	defer cancel()
+
+	rows, err := s.db.QueryContext(ctx, q, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []*User
+	for rows.Next() {
+		u := &User{}
+		if err := rows.Scan(&u.ID, &u.Username, &u.Email, &u.CreatedAt, &u.IsActive); err != nil {
+			return nil, err
+		}
+		users = append(users, u)
+	}
+	return users, rows.Err()
+}
+
 func (s *UsersStore) update(ctx context.Context, tx *sql.Tx, user *User) error {
 	query := `UPDATE users SET username = $1, email = $2, is_active = $3 WHERE id = $4`
 

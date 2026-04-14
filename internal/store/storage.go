@@ -25,6 +25,7 @@ type Storage struct {
 		Activate(context.Context, string) error
 		GetUserByEmail(context.Context, string) (*User, error)
 		SearchByUsername(ctx context.Context, query string) ([]*User, error)
+		GetSuggestedUsers(ctx context.Context, userID int64) ([]*User, error)
 	}
 	Posts interface {
 		Create(context.Context, *Post) error

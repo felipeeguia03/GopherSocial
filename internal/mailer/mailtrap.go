@@ -69,7 +69,9 @@ func (m mailTrapClient) Send(templateFile, username, email string, data any, isS
 	defer resp.Body.Close()
 
 	if resp.StatusCode >= 400 {
-		return resp.StatusCode, fmt.Errorf("mailtrap API error: status %d", resp.StatusCode)
+		respBody := new(bytes.Buffer)
+		respBody.ReadFrom(resp.Body)
+		return resp.StatusCode, fmt.Errorf("mailtrap API error: status %d, body: %s", resp.StatusCode, respBody.String())
 	}
 
 	return resp.StatusCode, nil

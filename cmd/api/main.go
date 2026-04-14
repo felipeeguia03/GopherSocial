@@ -9,6 +9,7 @@ import (
 	"github.com/felipeeguia03/vol7/internal/env"
 	"github.com/felipeeguia03/vol7/internal/mailer"
 	"github.com/felipeeguia03/vol7/internal/store"
+	"github.com/felipeeguia03/vol7/internal/store/cache"
 	"go.uber.org/zap"
 )
 
@@ -61,9 +62,14 @@ func main() {
 				iss:    env.GetString("TOKEN_ISS", "gophersocial"),
 			},
 		},
-
 		frontendURL: env.GetString("FRONTEND_URL", "http://localhost:4000"),
 		apiURL:      env.GetString("API_URL", "localhost:8080"),
+		redisConfig: redisConfig{
+			addr:    env.GetString("REDIS_ADDR", ""),
+			pw:      env.GetString("REDIS_PW", ""),
+			db:      env.GetInt("REDIS_DB", 0),
+			enabled: env.GetString("REDIS_ENABLED", "false") == "true",
+		},
 	}
 
 	//logger
@@ -84,6 +90,13 @@ func main() {
 
 	store := store.NewStorage(db)
 
+	var cacheStorage cache.Storage
+	if cfg.redisConfig.enabled {
+		rdb := cache.NewRedisClient(cfg.redisConfig.addr, cfg.redisConfig.pw, cfg.redisConfig.db)
+		cacheStorage = cache.NewRedisStorage(rdb)
+		logger.Infow("Redis conectado correctamente")
+	}
+
 	mailerClient, err := mailer.NewMailTrapClient(cfg.mail.mailtrap.APIKey, cfg.mail.fromEmail)
 	if err != nil {
 		log.Fatal(err)
@@ -96,11 +109,12 @@ func main() {
 	)
 
 	api := application{
-		config: cfg,
-		store:  store,
-		logger: logger,
-		mailer: mailerClient,
-		auth:   jwtAuth,
+		config:       cfg,
+		store:        store,
+		cacheStorage: cacheStorage,
+		logger:       logger,
+		mailer:       mailerClient,
+		auth:         jwtAuth,
 	}
 
 	if err := api.run(api.mount()); err != nil {

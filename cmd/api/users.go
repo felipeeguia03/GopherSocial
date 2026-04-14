@@ -132,6 +132,19 @@ func (app *application) getUserPostsHandler(w http.ResponseWriter, r *http.Reque
 	}
 }
 
+// searchUsersHandler godoc
+//
+//	@Summary		Search users by username
+//	@Description	Returns users matching the query, including whether the authenticated user follows each one
+//	@Tags			user
+//	@Accept			json
+//	@Produce		json
+//	@Param			q	query		string		true	"Username search query"
+//	@Success		200	{array}		store.User	"list of matching users with is_following field"
+//	@Failure		400	{object}	error		"q is required"
+//	@Failure		500	{object}	error
+//	@Security		ApiKeyAuth
+//	@Router			/users/search [get]
 func (app *application) searchUsersHandler(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query().Get("q")
 	if q == "" {
@@ -139,7 +152,9 @@ func (app *application) searchUsersHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	users, err := app.store.Users.SearchByUsername(r.Context(), q)
+	me := app.getAuthUserFromContext(r)
+
+	users, err := app.store.Users.SearchByUsername(r.Context(), me.ID, q)
 	if err != nil {
 		app.InternalServerError(w, r, err)
 		return
@@ -150,6 +165,16 @@ func (app *application) searchUsersHandler(w http.ResponseWriter, r *http.Reques
 	}
 }
 
+// getSuggestedUsersHandler godoc
+//
+//	@Summary		Get suggested users to follow
+//	@Description	Returns users not yet followed by the authenticated user, with is_following field
+//	@Tags			user
+//	@Produce		json
+//	@Success		200	{array}		store.User	"list of suggested users with is_following field"
+//	@Failure		500	{object}	error
+//	@Security		ApiKeyAuth
+//	@Router			/users/suggested [get]
 func (app *application) getSuggestedUsersHandler(w http.ResponseWriter, r *http.Request) {
 	me := app.getAuthUserFromContext(r)
 

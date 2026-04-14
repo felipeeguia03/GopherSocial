@@ -17,14 +17,15 @@ type UsersStore struct {
 }
 
 type User struct {
-	ID        int64    `json:"id"`
-	Username  string   `json:"username" `
-	Email     string   `json:"email"`
-	Password  password `json:"-"`
-	CreatedAt string   `json:"created_at" `
-	IsActive  bool     `json:"is_active" `
-	RoleID    int64    `json:"role_id"`
-	Role      Role     `json:"role"`
+	ID          int64    `json:"id"`
+	Username    string   `json:"username"`
+	Email       string   `json:"email"`
+	Password    password `json:"-"`
+	CreatedAt   string   `json:"created_at"`
+	IsActive    bool     `json:"is_active"`
+	RoleID      int64    `json:"role_id"`
+	Role        Role     `json:"role"`
+	IsFollowing bool     `json:"is_following"`
 }
 
 type password struct {
@@ -270,17 +271,18 @@ func (s *UsersStore) getUserFromInvitation(ctx context.Context, tx *sql.Tx, plai
 
 }
 
-func (s *UsersStore) SearchByUsername(ctx context.Context, query string) ([]*User, error) {
-	q := `SELECT id, username, email, created_at, is_active
+func (s *UsersStore) SearchByUsername(ctx context.Context, viewerID int64, query string) ([]*User, error) {
+	q := `SELECT id, username, email, created_at, is_active,
+		EXISTS (SELECT 1 FROM followers WHERE user_id = $1 AND follower_id = users.id) AS is_following
 	FROM users
-	WHERE is_active = true AND username ILIKE $1
+	WHERE is_active = true AND username ILIKE $2
 	ORDER BY username
 	LIMIT 20`
 
 	ctx, cancel := context.WithTimeout(ctx, QueryTimeDuration)
 	defer cancel()
 
-	rows, err := s.db.QueryContext(ctx, q, "%"+query+"%")
+	rows, err := s.db.QueryContext(ctx, q, viewerID, "%"+query+"%")
 	if err != nil {
 		return nil, err
 	}
@@ -289,7 +291,7 @@ func (s *UsersStore) SearchByUsername(ctx context.Context, query string) ([]*Use
 	var users []*User
 	for rows.Next() {
 		u := &User{}
-		if err := rows.Scan(&u.ID, &u.Username, &u.Email, &u.CreatedAt, &u.IsActive); err != nil {
+		if err := rows.Scan(&u.ID, &u.Username, &u.Email, &u.CreatedAt, &u.IsActive, &u.IsFollowing); err != nil {
 			return nil, err
 		}
 		users = append(users, u)
@@ -298,7 +300,8 @@ func (s *UsersStore) SearchByUsername(ctx context.Context, query string) ([]*Use
 }
 
 func (s *UsersStore) GetSuggestedUsers(ctx context.Context, userID int64) ([]*User, error) {
-	q := `SELECT id, username, email, created_at, is_active
+	q := `SELECT id, username, email, created_at, is_active,
+		EXISTS (SELECT 1 FROM followers WHERE user_id = $1 AND follower_id = users.id) AS is_following
 	FROM users
 	WHERE is_active = true
 	AND id != $1
@@ -320,7 +323,7 @@ func (s *UsersStore) GetSuggestedUsers(ctx context.Context, userID int64) ([]*Us
 	var users []*User
 	for rows.Next() {
 		u := &User{}
-		if err := rows.Scan(&u.ID, &u.Username, &u.Email, &u.CreatedAt, &u.IsActive); err != nil {
+		if err := rows.Scan(&u.ID, &u.Username, &u.Email, &u.CreatedAt, &u.IsActive, &u.IsFollowing); err != nil {
 			return nil, err
 		}
 		users = append(users, u)

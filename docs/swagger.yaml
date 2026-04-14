@@ -144,6 +144,8 @@ definitions:
         type: integer
       is_active:
         type: boolean
+      is_following:
+        type: boolean
       role:
         $ref: '#/definitions/store.Role'
       role_id:
@@ -543,6 +545,59 @@ paths:
           description: Internal Server Error
           schema: {}
       summary: Activates an user account
+      tags:
+      - user
+  /users/search:
+    get:
+      consumes:
+      - application/json
+      description: Returns users matching the query, including whether the authenticated
+        user follows each one
+      parameters:
+      - description: Username search query
+        in: query
+        name: q
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: list of matching users with is_following field
+          schema:
+            items:
+              $ref: '#/definitions/store.User'
+            type: array
+        "400":
+          description: q is required
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Search users by username
+      tags:
+      - user
+  /users/suggested:
+    get:
+      description: Returns users not yet followed by the authenticated user, with
+        is_following field
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: list of suggested users with is_following field
+          schema:
+            items:
+              $ref: '#/definitions/store.User'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get suggested users to follow
       tags:
       - user
 securityDefinitions:

@@ -1,116 +1,103 @@
 # GopherSocial
 
-A RESTful social network API built with Go. Users can register, create posts, follow each other, comment, and get a personalized feed.
+API REST de una red social construida en Go. Los usuarios pueden registrarse, crear posts, seguir a otros, comentar y recibir un feed personalizado.
 
-**Live API:** [gophersocial.onrender.com](https://gophersocial.onrender.com/v1/health)  
+**API en producción:** [gophersocial.onrender.com](https://gophersocial.onrender.com/v1/health)  
 **Frontend:** [gopher-social-web.vercel.app](https://gopher-social-web.vercel.app)  
-**API Docs:** [gophersocial.onrender.com/v1/swagger](https://gophersocial.onrender.com/v1/swagger/index.html)
+**Documentación:** [gophersocial.onrender.com/v1/swagger](https://gophersocial.onrender.com/v1/swagger/index.html)
 
 ---
 
-## Features
+## Funcionalidades
 
-- JWT authentication with token-based registration flow
-- Email confirmation on sign-up via transactional email (Brevo)
-- Posts with comments and user feed based on followed accounts
-- Follow / unfollow system with suggested users
-- Role-based access control (user / moderator / admin)
-- Redis caching layer for user lookups
-- Rate limiting middleware
-- Swagger documentation
-- CI via GitHub Actions (build, vet, staticcheck, tests)
-- CD via Render (auto-deploy on push to `main`)
+- Autenticación con JWT y flujo de registro por email
+- Confirmación de cuenta vía email transaccional (Brevo)
+- Posts con comentarios y feed personalizado según usuarios seguidos
+- Sistema de seguir / dejar de seguir con usuarios sugeridos
+- Control de acceso por roles (user / moderador / admin)
+- Capa de caché con Redis para consultas de usuarios
+- Middleware de rate limiting
+- Documentación Swagger
+- CI con GitHub Actions (build, vet, staticcheck, tests)
+- CD con Render (deploy automático al hacer push a `main`)
 
-## Tech Stack
+## Stack Tecnológico
 
-| Layer | Technology |
-|---|---|
-| Language | [Go](https://go.dev/) |
+| Capa | Tecnología |
+|------|------------|
+| Lenguaje | [Go](https://go.dev/) |
 | Router | [chi](https://github.com/go-chi/chi) |
-| Database | [PostgreSQL 16](https://www.postgresql.org/) |
-| Cache | [Redis](https://redis.io/) via [go-redis](https://github.com/redis/go-redis) |
-| Auth | [golang-jwt/jwt](https://github.com/golang-jwt/jwt) |
-| Migrations | [golang-migrate](https://github.com/golang-migrate/migrate) |
+| Base de datos | [PostgreSQL 16](https://www.postgresql.org/) |
+| Caché | [Redis](https://redis.io/) via [go-redis](https://github.com/redis/go-redis) |
+| Autenticación | [golang-jwt/jwt](https://github.com/golang-jwt/jwt) |
+| Migraciones | [golang-migrate](https://github.com/golang-migrate/migrate) |
 | Email | [Brevo](https://www.brevo.com/) |
-| Docs | [Swagger / swaggo](https://github.com/swaggo/swag) |
+| Documentación | [Swagger / swaggo](https://github.com/swaggo/swag) |
 | Logging | [zap](https://github.com/uber-go/zap) |
-| Validation | [go-playground/validator](https://github.com/go-playground/validator) |
-| Containerization | [Docker](https://www.docker.com/) |
+| Validación | [go-playground/validator](https://github.com/go-playground/validator) |
+| Contenedores | [Docker](https://www.docker.com/) |
 
-## Project Structure
+## Estructura del Proyecto
 
 ```
 .
 ├── cmd/
-│   ├── api/          # HTTP handlers, middleware, routing
-│   └── migrate/      # Migrations and seed data
+│   ├── api/          # Handlers HTTP, middleware, rutas
+│   └── migrate/      # Migraciones y datos de prueba
 ├── internal/
-│   ├── auth/         # JWT authenticator
-│   ├── db/           # Database connection
-│   ├── env/          # Environment variable helpers
-│   ├── mailer/       # Email client and templates
+│   ├── auth/         # Autenticador JWT
+│   ├── db/           # Conexión a la base de datos
+│   ├── env/          # Helpers para variables de entorno
+│   ├── mailer/       # Cliente de email y templates
 │   ├── ratelimiter/  # Rate limiting
-│   └── store/        # Data access layer (PostgreSQL + Redis)
-└── docs/             # Auto-generated Swagger docs
+│   └── store/        # Capa de acceso a datos (PostgreSQL + Redis)
+└── docs/             # Documentación Swagger autogenerada
 ```
 
-## API Endpoints
+## Endpoints
 
-| Method | Endpoint | Description | Auth |
+| Método | Endpoint | Descripción | Auth |
 |--------|----------|-------------|------|
-| POST | `/v1/auth/register` | Register a new user | No |
-| POST | `/v1/auth/token` | Login and get JWT | No |
-| PUT | `/v1/users/activate/{token}` | Activate account via email | No |
-| GET | `/v1/users/{id}` | Get user profile | JWT |
-| GET | `/v1/users/search?q=` | Search users by username | JWT |
-| GET | `/v1/users/suggested` | Get suggested users to follow | JWT |
-| PUT | `/v1/users/{id}/follow` | Follow a user | JWT |
-| PUT | `/v1/users/{id}/unfollow` | Unfollow a user | JWT |
-| GET | `/v1/feed` | Get personalized feed | JWT |
-| POST | `/v1/posts` | Create a post | JWT |
-| GET | `/v1/posts/{id}` | Get a post | JWT |
-| PATCH | `/v1/posts/{id}` | Update a post | JWT (owner/moderator) |
-| DELETE | `/v1/posts/{id}` | Delete a post | JWT (owner/admin) |
-| POST | `/v1/posts/{id}/comments` | Add a comment | JWT |
+| POST | `/v1/auth/register` | Registrar un nuevo usuario | No |
+| POST | `/v1/auth/token` | Login y obtener JWT | No |
+| PUT | `/v1/users/activate/{token}` | Activar cuenta por email | No |
+| GET | `/v1/users/{id}` | Obtener perfil de usuario | JWT |
+| GET | `/v1/users/search?q=` | Buscar usuarios por username | JWT |
+| GET | `/v1/users/suggested` | Usuarios sugeridos para seguir | JWT |
+| PUT | `/v1/users/{id}/follow` | Seguir a un usuario | JWT |
+| PUT | `/v1/users/{id}/unfollow` | Dejar de seguir a un usuario | JWT |
+| GET | `/v1/feed` | Obtener feed personalizado | JWT |
+| POST | `/v1/posts` | Crear un post | JWT |
+| GET | `/v1/posts/{id}` | Obtener un post | JWT |
+| PATCH | `/v1/posts/{id}` | Actualizar un post | JWT (dueño/moderador) |
+| DELETE | `/v1/posts/{id}` | Eliminar un post | JWT (dueño/admin) |
+| POST | `/v1/posts/{id}/comments` | Agregar un comentario | JWT |
 
-## Getting Started
+## Cómo correr el proyecto
 
-### Prerequisites
+### Requisitos
 
 - Go 1.21+
 - Docker
 - [golang-migrate](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate)
 
-### Running locally
+### Correr localmente
 
 ```bash
-# Start PostgreSQL and Redis
+# Levantar PostgreSQL y Redis
 docker compose up -d
 
-# Copy and fill environment variables
+# Copiar y completar las variables de entorno
 cp .envrc.example .envrc
 source .envrc
 
-# Run migrations
+# Correr las migraciones
 make migrate-up
 
-# Seed the database (optional)
+# Cargar datos de prueba (opcional)
 make seed
 
-# Start the server
+# Iniciar el servidor
 go run ./api
 ```
 
-### Environment Variables
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `ADDR` | Server address | `:8080` |
-| `DB_ADDR` | PostgreSQL DSN | `postgres://root:root@localhost/vol7?sslmode=disable` |
-| `REDIS_ADDR` | Redis address | — |
-| `REDIS_ENABLED` | Enable Redis cache | `false` |
-| `MAIL_TRAP_API` | Brevo API key | — |
-| `FROM_EMAIL` | Sender email address | — |
-| `FRONTEND_URL` | Frontend URL for activation links | `http://localhost:4000` |
-| `TOKEN_SECRET` | JWT signing secret | — |
-| `CORS_ALLOWED_ORIGIN` | Allowed CORS origins (comma-separated) | `http://localhost:5174` |

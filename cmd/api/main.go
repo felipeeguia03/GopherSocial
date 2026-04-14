@@ -45,7 +45,7 @@ func main() {
 			maxOpenConns: env.GetInt("MAX_OPEN_CONNS", 20),
 		},
 		mail: mailConfig{
-			fromEmail: env.GetString("FROM_EMAIL", "hello@demomailtrap.co"),
+			fromEmail: env.GetString("FROM_EMAIL", "gophersocial@demomailtrap.co"),
 			exp:       time.Hour * 24 * 3, //3 days
 			mailtrap: mailtrapConfig{
 				APIKey: env.GetString("MAIL_TRAP_API", ""),

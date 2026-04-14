@@ -12,7 +12,7 @@ import (
 	"go.uber.org/zap"
 )
 
-const version = "0.0.1"
+const version = ""
 
 //	@title	Swagger V7 API curso Backend
 

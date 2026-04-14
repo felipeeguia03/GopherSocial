@@ -1,1 +1,6 @@
 WEB/
+.env
+.envrc
+*.exe
+*.test
+*.out

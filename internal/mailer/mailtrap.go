@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-const resendAPIURL = "https://api.resend.com/emails"
+const brevoAPIURL = "https://api.brevo.com/v3/smtp/email"
 
 type mailTrapClient struct {
 	fromEmail string
@@ -44,10 +44,10 @@ func (m mailTrapClient) Send(templateFile, username, email string, data any, isS
 	}
 
 	payload := map[string]any{
-		"from":    m.fromEmail,
-		"to":      []string{email},
-		"subject": subject.String(),
-		"html":    body.String(),
+		"sender":      map[string]string{"email": m.fromEmail},
+		"to":          []map[string]string{{"email": email}},
+		"subject":     subject.String(),
+		"htmlContent": body.String(),
 	}
 
 	jsonBody, err := json.Marshal(payload)
@@ -55,11 +55,11 @@ func (m mailTrapClient) Send(templateFile, username, email string, data any, isS
 		return -1, err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, resendAPIURL, bytes.NewBuffer(jsonBody))
+	req, err := http.NewRequest(http.MethodPost, brevoAPIURL, bytes.NewBuffer(jsonBody))
 	if err != nil {
 		return -1, err
 	}
-	req.Header.Set("Authorization", "Bearer "+m.apiKey)
+	req.Header.Set("api-key", m.apiKey)
 	req.Header.Set("Content-Type", "application/json")
 
 	resp, err := http.DefaultClient.Do(req)

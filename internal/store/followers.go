@@ -44,3 +44,13 @@ func (s *FollowerStore) Unfollow(ctx context.Context, userID, followerID int64) 
 	}
 	return nil
 }
+
+func (s *FollowerStore) IsFollowing(ctx context.Context, userID, targetID int64) (bool, error) {
+	query := `SELECT EXISTS(SELECT 1 FROM followers WHERE user_id = $1 AND follower_id = $2)`
+	ctx, cancel := context.WithTimeout(ctx, QueryTimeDuration)
+	defer cancel()
+
+	var exists bool
+	err := s.db.QueryRowContext(ctx, query, userID, targetID).Scan(&exists)
+	return exists, err
+}

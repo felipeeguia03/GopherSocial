@@ -8,8 +8,9 @@ import (
 
 func NewMockStore() Storage {
 	return Storage{
-		Users: &MockUserStore{},
-		Roles: &MockRoleStore{},
+		Users:     &MockUserStore{},
+		Roles:     &MockRoleStore{},
+		Followers: &MockFollowerStore{},
 	}
 }
 
@@ -45,6 +46,20 @@ func (m *MockUserStore) SearchByUsername(ctx context.Context, viewerID int64, qu
 
 func (m *MockUserStore) GetSuggestedUsers(ctx context.Context, userID int64) ([]*User, error) {
 	return nil, nil
+}
+
+type MockFollowerStore struct{}
+
+func (m *MockFollowerStore) Follow(ctx context.Context, userID, followerID int64) error {
+	return nil
+}
+
+func (m *MockFollowerStore) Unfollow(ctx context.Context, userID, followerID int64) error {
+	return nil
+}
+
+func (m *MockFollowerStore) IsFollowing(ctx context.Context, userID, targetID int64) (bool, error) {
+	return false, nil
 }
 
 type MockRoleStore struct{}

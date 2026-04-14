@@ -33,10 +33,17 @@ const (
 //	@Router			/users/{userID} [get]
 func (app *application) getUserHandler(w http.ResponseWriter, r *http.Request) {
 	user := app.getUserFromContext(r)
-	err := JsonResponse(w, http.StatusOK, user)
-	if err != nil {
+	me := app.getAuthUserFromContext(r)
+
+	if me != nil && me.ID != user.ID {
+		isFollowing, err := app.store.Followers.IsFollowing(r.Context(), me.ID, user.ID)
+		if err == nil {
+			user.IsFollowing = isFollowing
+		}
+	}
+
+	if err := JsonResponse(w, http.StatusOK, user); err != nil {
 		app.InternalServerError(w, r, err)
-		return
 	}
 }
 

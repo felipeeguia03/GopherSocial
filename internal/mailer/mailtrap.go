@@ -44,8 +44,8 @@ func (m mailTrapClient) Send(templateFile, username, email string, data any, isS
 	}
 
 	payload := map[string]any{
-		"from":    map[string]string{"email": m.fromEmail},
-		"to":      []map[string]string{{"email": email}},
+		"from":    m.fromEmail,
+		"to":      []string{email},
 		"subject": subject.String(),
 		"html":    body.String(),
 	}

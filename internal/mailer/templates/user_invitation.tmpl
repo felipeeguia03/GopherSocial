@@ -1,0 +1,23 @@
+{{define "subject"}}Finish Registration with GopherSocial{{end}}
+
+{{define "body"}}
+<!doctype html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+</head>
+<body> <p>Hola {{.Username}}!</p>
+<p>Gracias por registrarte en GopherSocial. Estamos contentos de tenerte con nosotros!</p>
+<p>Antes de poder logearte en la app vas  a tener que confirmar tu direccion de email. Hace click debajo para confirmarla</p>
+<p><a href="{{.ActivationURL}}">{{.ActivationURL}}</a></p>
+<p>Si queres activar tu cuenta de forma manual copia y pega el codigo del link de arriba</p>
+<p>Si no te queres loggear, ignora este email</p>
+
+<p>Gracias!</p>
+<p>Equipo de GopherSocial</p>
+</body>
+
+</html>
+{{end}}

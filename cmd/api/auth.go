@@ -175,7 +175,7 @@ func (app *application) createUserTokenHandler(w http.ResponseWriter, r *http.Re
 
 	if err != nil {
 		switch {
-		case errors.Is(err, store.NotFoundError):
+		case errors.Is(err, store.ErrNotFound):
 			app.UnauthorizedErrorResponse(w, r, err)
 		case errors.Is(err, store.ErrNotActivated):
 			app.UnauthorizedErrorResponse(w, r, errors.New("account is not activated, check your email"))

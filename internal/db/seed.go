@@ -191,29 +191,6 @@ var tags = []string{
 	"buildinpublic",
 }
 
-var comments = []string{
-	"Gran punto. Mucha gente subestima lo importante que es el diseño antes del código.",
-	"Totalmente de acuerdo, la arquitectura es lo que realmente escala.",
-	"Esto me pasó hace poco en producción, aprendí por las malas",
-	"Excelente explicación, especialmente la parte de concurrencia.",
-	"Go realmente te obliga a pensar en simplicidad.",
-	"Me encantó el enfoque práctico, más contenido así.",
-	"El tema de optimistic locking casi nadie lo menciona.",
-	"Esto debería enseñarse más en lugar de solo frameworks.",
-	"Gran recordatorio sobre mantener handlers pequeños.",
-	"La claridad siempre gana sobre la complejidad innecesaria.",
-	"Justo estoy trabajando en algo similar, me sirve mucho.",
-	"Middleware bien usado cambia completamente la estructura del proyecto.",
-	"Qué buena reflexión sobre criterio vs sintaxis.",
-	"Esto aplica incluso fuera de Go, es puro diseño.",
-	"Excelente hilo, se nota la experiencia detrás.",
-	"Tal cual, menos magia y más fundamentos.",
-	"Esto explica muchos bugs silenciosos que he visto.",
-	"Me hizo replantear cómo estoy organizando mis servicios.",
-	"Necesitamos más contenido técnico de este nivel.",
-	"Gran aporte, directo y sin humo.",
-}
-
 func Seed(store store.Storage, db *sql.DB) error {
 	ctx := context.Background()
 

@@ -11,7 +11,7 @@ var (
 	QueryTimeDuration     = time.Second * 10
 	ErrDuplicatedEmail    = errors.New("duplicated user email")
 	ErrDuplicatedUsername = errors.New("duplicated usernames")
-	NotFoundError         = errors.New("not found")
+	ErrNotFound           = errors.New("not found")
 	ErrConflict           = errors.New("conflict")
 	ErrNotActivated       = errors.New("user account is not activated")
 )

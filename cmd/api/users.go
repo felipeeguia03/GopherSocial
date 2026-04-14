@@ -10,10 +10,12 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-type ContextUser string
+type contextKey string
 
-var UserKey = "user"
-var AuthUserKey = "authUser"
+const (
+	UserKey     contextKey = "user"
+	AuthUserKey contextKey = "authUser"
+)
 
 // GetUserHandler godoc
 //
@@ -154,7 +156,7 @@ func (app *application) activateUserHandler(w http.ResponseWriter, r *http.Reque
 	err := app.store.Users.Activate(r.Context(), token)
 	if err != nil {
 		switch {
-		case errors.Is(err, store.NotFoundError):
+		case errors.Is(err, store.ErrNotFound):
 			app.NotFoundError(w, r, err)
 		default:
 			app.InternalServerError(w, r, err)
@@ -179,7 +181,7 @@ func (app *application) userContextMiddleware(next http.Handler) http.Handler {
 		user, err := app.store.Users.GetUserByID(ctx, int64(userID))
 		if err != nil {
 			switch {
-			case errors.Is(err, store.NotFoundError):
+			case errors.Is(err, store.ErrNotFound):
 				app.NotFoundError(w, r, err)
 				return
 			}

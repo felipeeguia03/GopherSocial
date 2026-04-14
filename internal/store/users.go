@@ -92,7 +92,7 @@ func (s *UsersStore) GetUserByID(ctx context.Context, id int64) (*User, error) {
 	if err != nil {
 		switch {
 		case errors.Is(err, sql.ErrNoRows):
-			return nil, NotFoundError
+			return nil, ErrNotFound
 		default:
 			return nil, err
 		}
@@ -121,7 +121,7 @@ func (s *UsersStore) GetUserByEmail(ctx context.Context, email string) (*User, e
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:
-			return nil, NotFoundError
+			return nil, ErrNotFound
 		default:
 			return nil, err
 		}
@@ -260,7 +260,7 @@ func (s *UsersStore) getUserFromInvitation(ctx context.Context, tx *sql.Tx, plai
 	if err != nil {
 		switch err {
 		case sql.ErrNoRows:
-			return nil, NotFoundError
+			return nil, ErrNotFound
 		default:
 			return nil, err
 		}

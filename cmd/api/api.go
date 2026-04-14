@@ -48,9 +48,6 @@ type config struct {
 }
 
 type redisConfig struct {
-	addr    string
-	pw      string
-	db      int
 	enabled bool
 }
 

@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-const mailtrapAPIURL = "https://send.api.mailtrap.io/api/send"
+const resendAPIURL = "https://api.resend.com/emails"
 
 type mailTrapClient struct {
 	fromEmail string
@@ -55,7 +55,7 @@ func (m mailTrapClient) Send(templateFile, username, email string, data any, isS
 		return -1, err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, mailtrapAPIURL, bytes.NewBuffer(jsonBody))
+	req, err := http.NewRequest(http.MethodPost, resendAPIURL, bytes.NewBuffer(jsonBody))
 	if err != nil {
 		return -1, err
 	}

@@ -9,6 +9,7 @@ import (
 func NewMockStore() Storage {
 	return Storage{
 		Users: &MockUserStore{},
+		Roles: &MockRoleStore{},
 	}
 }
 
@@ -40,4 +41,10 @@ func (m *MockUserStore) Delete(ctx context.Context, id int64) error {
 
 func (m *MockUserStore) SearchByUsername(ctx context.Context, query string) ([]*User, error) {
 	return nil, nil
+}
+
+type MockRoleStore struct{}
+
+func (m *MockRoleStore) GetByName(ctx context.Context, slug string) (*Role, error) {
+	return &Role{}, nil
 }

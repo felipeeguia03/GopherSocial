@@ -53,6 +53,7 @@ func NewStorage(db *sql.DB) Storage {
 		Posts:     &PostsStore{db},
 		Comments:  &CommentsStore{db},
 		Followers: &FollowerStore{db},
+		Roles:     &RoleStore{db},
 	}
 }
 

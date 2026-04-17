@@ -87,10 +87,6 @@ A RESTful social network API built with Go. Users can register, create posts, fo
 # Start PostgreSQL and Redis
 docker compose up -d
 
-# Copy and fill environment variables
-cp .envrc.example .envrc
-source .envrc
-
 # Run migrations
 make migrate-up
 
@@ -99,4 +95,18 @@ make seed
 
 # Start the server
 go run ./api
+```
+
+Create a `.envrc` file in the root with the following variables:
+
+```bash
+export ADDR=":8080"
+export DB_ADDR="postgres://root:root@localhost/vol7?sslmode=disable"
+export CORS_ALLOWED_ORIGIN="http://localhost:5174"
+export FRONTEND_URL="http://localhost:4000"
+export MAIL_TRAP_API=""
+export FROM_EMAIL=""
+export TOKEN_SECRET=""
+export REDIS_ADDR=""
+export REDIS_ENABLED="false"
 ```
